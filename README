@@ -1,0 +1,37 @@
+- WTFISTHIS
+
+This is PIPAdns, a DNS proxy that forwards requests to Google DNS and delivers the result back.
+
+But it also simulates PIPA/SOPA's DNS redirection/blocking mechanism. It randomly delivers another IP of your choice at times, which is basically what PIPA enables anybody with enough money to do...just not randomly, but always.
+
+The technically more accurate version is this:
+PIPAdns listens on all interfaces on port 53 UDP (surprise) and forwards any packets it gets to Google DNS (or whatever you configure in the code). It reads the response and changes the last four bytes with a certain probability to a certain value (i.e. the IP).
+
+- INSTALLATION
+
+gcc -o pipadns pipadns.c
+sudo ./pipadns
+
+Now configure your computer, someone else's computer or entire networks to use the box you just ran that on as the DNS server.
+
+- CONFIGURATION
+
+At the moment, it's all configuration-by-code. The things you probably want to change are right at the beginning, though. Don't forget to recompile after adjusting these values.
+
+- BUGS/NONFEATURES
+
+The code is ugly and mostly undocumented. I'm a tired Euro, don't worry, will do stuff. If you've ever coded server/client architectures in C, it shouldn't be hard to read.
+
+There's a good chance that the simplicity of PIPAdns will blow up things.
+In the best case, you have a response that contains several response records (try `dig google.com`). PIPAdns will only overwrite the last one (which might be considered the "least preferrable one").
+In the worst case, someone requests other record types than A and gets an invalid response. Most software should try again, and so will most users. Eventually they will receive one of the non-faked responses.
+
+- LICENSE
+
+All of this is such basic code that it would be laughable to actually license it.
+Since more than 50% of everything in here is from `man getaddrinfo(3)` (yes, really), ask them.
+
+- TODO
+
+Check if the request is for any record type other than A and do not fake response in that case.
+Moar comments.

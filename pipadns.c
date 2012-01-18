@@ -11,6 +11,9 @@
 
 int main(int argc, char ** argv)
 {
+	int probability = 3; // Will redirect to our fake IP in one of $probability cases
+	char ip[4] = {(char)127, (char)0, (char)0, (char)1}; // The "fake" IP. Run HTTPd etc on this.
+	char *dns = "8.8.8.8"; // IP address of the DNS server we're proxying
 	char buf[512];
 	int readc,off, server_sock, client_sock;
 	unsigned int length;
@@ -112,13 +115,13 @@ int main(int argc, char ** argv)
 		close(client_sock);
 
 		//Random overwrite
-		if(rand()%2)
+		if(!(rand()%probability))
 		{
 			puts("Overwriting response ;)");
-			buf[off-4] = (char)127;
-			buf[off-3] = (char)1;
-			buf[off-2] = (char)2;
-			buf[off-1] = (char)3;
+			buf[off-4] = (char)ip[0];
+			buf[off-3] = (char)ip[1];
+			buf[off-2] = (char)ip[2];
+			buf[off-1] = (char)ip[3];
 		}
 		else
 			puts("No overwrite, delivering original result.");
